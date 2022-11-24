@@ -1,0 +1,10 @@
+#!/bin/bash
+# [[ -z "${CARD_PROFILE}" ]] && echo "Environment variable <CARD_PROFILE> not set" && exit 1
+
+declare -A toggle_map=(["handsfree_head_unit"]="a2dp_sink" ["a2dp_sink"]="handsfree_head_unit")
+current_profile=`pactl info | perl -ne 'if (/Default Sink: \w+.\w+.(\w+)/) { print $1 }'`
+toggle_profile=${toggle_map[$current_profile]}
+
+[[ -z "$toggle_profile" ]] && echo "No mapping for current profile <${current_profile}>" && exit 1
+echo "Toggling card profile to <${toggle_profile}>"
+pactl set-card-profile bluez_card.2C_41_A1_08_26_3C ${toggle_profile}
